@@ -16,7 +16,7 @@ class NeuronLayer implements INeuronLayer
 
     /* @param $countNeurons int
      * @param $previousLayer INeuronLayer */
-    public function NeuronLayer($countNeurons, $previousLayer = null)
+    function __construct($countNeurons, $previousLayer = null)
     {
         $this->initNeurons($countNeurons, $previousLayer);
     }
@@ -25,8 +25,9 @@ class NeuronLayer implements INeuronLayer
      * @param $previousLayer INeuronLayer */
     private function initNeurons($countNeurons, $previousLayer = null)
     {
+        $activationFunction = new SigmoidFunction();
         for ($index = 0; $index < $countNeurons; $index++) {
-            $this->neurons[] = new Neuron($previousLayer);
+            $this->neurons[] = new Neuron($activationFunction, $previousLayer);
         }
     }
 

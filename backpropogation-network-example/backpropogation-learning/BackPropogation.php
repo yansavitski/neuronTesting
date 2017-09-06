@@ -16,9 +16,10 @@ class BackPropogation
 {
     /* @var INeuronLayer[] */
     private $layers;
+    /* @var float */
     private $stepLearning;
 
-    public function BackPropogation($stepLearning = 0.1)
+    function __construct($stepLearning = 0.1)
     {
         $this->stepLearning = $stepLearning;
     }
@@ -28,7 +29,7 @@ class BackPropogation
         $this->layers = $layers;
     }
 
-    public function study($outputVector)
+    public function study($expectedOutputVector)
     {
         $countLastLayerDelta = function ($out, $expectedOut)
         {
@@ -42,26 +43,45 @@ class BackPropogation
 
         $outputLayerKey = count($this->layers) - 1;
         $layer = $this->layers[$outputLayerKey];
-        $delta = $this->calculatedDelta($layer->getNeurons(), $countLastLayerDelta, $outputVector);
+        $delta = $this->calculatedDeltaAndChangedWeights($layer->getNeurons(), $countLastLayerDelta, $expectedOutputVector);
 
         $lastHiddenLayerKey = $outputLayerKey - 1;
         for ($index = $lastHiddenLayerKey; $index >= 0; $index--) {
             $layer = $this->layers[$index];
             $sumDeltaAndWeight = $this->countSumDeltaAndWeight($this->layers[($index + 1)], $delta);
-            $delta = $this->calculatedDelta($layer->getNeurons(), $countHiddenLayerDelta, $sumDeltaAndWeight);
+            $delta = $this->calculatedDeltaAndChangedWeights($layer->getNeurons(), $countHiddenLayerDelta, $sumDeltaAndWeight);
         }
     }
 
-    /* @param $neurons INeuron[] */
-    public function calculatedDelta($neurons, $method, $value)
+    /* @return float */
+    public function getStepLearning()
+    {
+        return $this->stepLearning;
+    }
+
+    /* @param $neurons INeuron[]
+     * @param $value */
+    private function calculatedDeltaAndChangedWeights($neurons, $method, $value)
     {
         $delta = [];
         foreach ($neurons as $key => $neuron) {
             $out = $neuron->getResult();
             $delta[$key] = $method($out, $value[$key]);
+            $this->changedWeights($neuron, $delta[$key]);
         }
 
         return $delta;
+    }
+
+    /* @param $neuron INeuron
+     * @param $delta float */
+    private function changedWeights($neuron, $delta)
+    {
+        foreach ($neuron->getLinks() as $link) {
+            $result = $link->getPreviousNeuron() ? $link->getPreviousNeuron()->getResult() : 0;
+            $weight = $link->getWeight() + $this->getStepLearning() * $delta * $result;
+            $link->setWeight($weight);
+        }
     }
 
     public function isLastLayer($layer)

@@ -1,7 +1,22 @@
 <?php
-use NeuronNetwork;
 use NeuronNetwork\PerceptronNetwork;
 use NeuronLearning\BackPropogation;
+
+requireAllFilesFromFolder('interfaces');
+requireAllFilesFromFolder('network');
+requireAllFilesFromFolder('backpropogation-learning');
+//require "\\interfaces\\INeuronNetwork.php";
+//require "\\network\\PerceptronNetwork.php";
+function requireAllFilesFromFolder($name)
+{
+    foreach (scandir(__DIR__."\\$name") as $filename) {
+        $path = __DIR__."\\$name" . '/' . $filename;
+        if (is_file($path)) {
+            require $path;
+        }
+    }
+}
+
 /**
  * Created by PhpStorm.
  * User: yansa
@@ -40,12 +55,25 @@ $networkMap = [3, 1];
 $neuronNetwork = new PerceptronNetwork($networkMap);
 $learningNetwork = new BackPropogation();
 $learningNetwork->setLayers($neuronNetwork->getLayers());
+echo "<h1>Сеть создана </h1></br>";
+echo "<h1>Сеть обучается </h1></br>";
 
-for ($i=0; $i < 10000; $i++) {
+for ($i=0; $i < 100; $i++) {
     foreach ($learningData as $data) {
         $neuronNetwork->handleData($data[0]);
-        $learningNetwork->study();
+        $learningNetwork->study(($data[1] + 1) / 4);
     }
+}
+
+echo "<h1>Сеть вроде обучилась</h1></br>";
+echo "<h1>Запускаем тест</h1></br>";
+
+foreach($testLearningData as $input) {
+    $output = $neuronNetwork->handleData($input[0]);
+    $index = ceil(($output[0] * 4)) - 1;
+    $index = $index < 0 ? 0 : $index;
+    echo "Сеть считает что ответ: ".OUTPUTVAL[$index]. "</br>";
+    echo "Правильный ответ: ".OUTPUTVAL[$input[1]] . "</br>";
 }
 
 

@@ -15,17 +15,19 @@ class Neuron implements INeuron
     /* @var IActivationFunction */
     private $activationFunction;
     /* @var INeuronLink[] */
-    private $links;
+    private $links = [];
     /* @var float */
     private $result;
 
     /* @param $activationFunction IActivationFunction
      * @param $previousLayer INeuronLayer
      */
-    public function Neuron($activationFunction = null, $previousLayer = null)
+    function __construct($activationFunction, $previousLayer = null)
     {
         $this->activationFunction = $activationFunction;
-        $this->initLinks($previousLayer);
+        if ($previousLayer) {
+            $this->initLinks($previousLayer);
+        }
     }
 
     /* @return INeuronLink[] */

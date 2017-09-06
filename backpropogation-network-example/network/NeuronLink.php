@@ -17,7 +17,7 @@ class NeuronLink implements InterfaceNeuronNetwork\INeuronLink
     private $weight;
 
     /* @param $previousNeuron INeuron */
-    public function NeuronLink($previousNeuron)
+    function __construct($previousNeuron)
     {
         $this->previousNeuron = $previousNeuron;
         $this->initRandomWeight();
