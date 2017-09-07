@@ -31,7 +31,7 @@ class NeuronLink implements InterfaceNeuronNetwork\INeuronLink
     /* @return INeuron */
     public function getPreviousNeuron()
     {
-        return $this-$this->previousNeuron;
+        return $this->previousNeuron;
     }
 
     /* @return float */

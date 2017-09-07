@@ -24,8 +24,12 @@ class PerceptronNetwork implements INeuronNetwork
     private function initNetworkByMap($networkMap)
     {
         foreach ($networkMap as $key => $countNeurons) {
-            $lastLayer = !empty($this->layers) ? end($this->layers) : null;
-            $this->layers[] = new NeuronLayer($countNeurons, $lastLayer);
+            if ($key == 0) {
+                $this->layers[] = new FirstLayer($countNeurons);
+            } else {
+                $lastLayer = end($this->layers);
+                $this->layers[] = new NeuronLayer($countNeurons, $lastLayer);
+            }
         }
     }
 

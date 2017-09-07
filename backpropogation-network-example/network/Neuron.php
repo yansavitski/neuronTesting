@@ -68,7 +68,8 @@ class Neuron implements INeuron
     public function calculateNeuronAnswer($inputVector)
     {
         if (empty($this->links) || count($this->links) != count($inputVector)) {
-            return;
+            $this->result = $inputVector[0];
+            return $this->getResult();
         }
 
         $result = 0;
@@ -77,7 +78,7 @@ class Neuron implements INeuron
             $result += $inputVector[$key] * $link->getWeight();
         }
 
-        $this->result = $this->activationFunction;
+        $this->result = $this->activationFunction->calculateExit($result);
 
         return $this->getResult();
     }

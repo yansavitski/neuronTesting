@@ -61,9 +61,8 @@ class NeuronLayer implements INeuronLayer
     /* @param $inputVector float[] */
     public function setInputVector($inputVector)
     {
-        $outputVector = [];
         foreach ($this->neurons as $key => $neuron) {
-            $outputVector[] = $neuron->calculateNeuronAnswer($inputVector);
+            $neuron->calculateNeuronAnswer($inputVector);
         }
     }
 }
