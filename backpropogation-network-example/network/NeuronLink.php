@@ -25,7 +25,7 @@ class NeuronLink implements InterfaceNeuronNetwork\INeuronLink
 
     private function initRandomWeight()
     {
-        $this->weight = rand(0, 0.1);
+        $this->weight = 0.28;//rand(1, 30)/100;
     }
 
     /* @return INeuron */

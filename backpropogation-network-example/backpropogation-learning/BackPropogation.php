@@ -19,7 +19,7 @@ class BackPropogation
     /* @var float */
     private $stepLearning;
 
-    function __construct($stepLearning = 0.1)
+    function __construct($stepLearning = 0.8)
     {
         $this->stepLearning = $stepLearning;
     }
@@ -46,7 +46,7 @@ class BackPropogation
         $delta = $this->calculatedDeltaAndChangedWeights($layer->getNeurons(), $countLastLayerDelta, $expectedOutputVector);
 
         $lastHiddenLayerKey = $outputLayerKey - 1;
-        for ($index = $lastHiddenLayerKey; $index >= 0; $index--) {
+        for ($index = $lastHiddenLayerKey; $index > 0; $index--) {
             $layer = $this->layers[$index];
             $sumDeltaAndWeight = $this->countSumDeltaAndWeight($this->layers[($index + 1)], $delta);
             $delta = $this->calculatedDeltaAndChangedWeights($layer->getNeurons(), $countHiddenLayerDelta, $sumDeltaAndWeight);
