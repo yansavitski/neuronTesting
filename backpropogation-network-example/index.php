@@ -33,24 +33,25 @@ CONST OUTPUTVAL = [
 ];
 
 $learningData = [
-    [[0.5, 1, 1], 1],
-    [[0.9, 1, 2], 1],
-    [[0.8, 0, 1], 1],
-    [[0.3, 1, 1], 2],
-    [[0.6, 1, 2], 2],
-    [[0.4, 0, 1], 2],
-    [[0.9, 1, 7], 3],
-    [[0.6, 1, 4], 3],
-    [[0.1, 0, 1], 3],
+    [[0.5, 1, 0.1], 1],
+    [[0.9, 1, 0.2], 1],
+    [[0.8, 0, 0.1], 1],
+    [[0.3, 1, 0.1], 2],
+    [[0.6, 1, 0.2], 2],
+    [[0.4, 0, 0.1], 2],
+    [[0.9, 1, 0.7], 3],
+    [[0.6, 1, 0.4], 3],
+    [[0.1, 0, 0.1], 3],
     [[0.6, 1, 0], 0],
-    [[1, 0, 0], 0]
+    [[0.3, 0, 0], 0]
 ];
 $testLearningData = [
-    [[1, 0, 1], 1],
-    [[0.9, 1, 3], 2],
-    [[0.3, 0, 8], 3],
-    [[1, 1, 8], 3],
+    [[1, 0, 0.1], 1],
+    [[0.9, 1, 0.3], 2],
+    [[0.3, 0, 0.8], 3],
+    [[1, 1, 0.8], 3],
     [[0.1, 0, 0], 0],
+    [[1, 0, 0], 0],
 ]; ?>
 <html>
     <head>
@@ -59,13 +60,14 @@ $testLearningData = [
     <body>
         <div class="container text-center">
             <?php
-            $networkMap = [3, 1];
+            $networkMap = [3, 3, 4];
+            $maxRepeat = 700;//800 step=1.2
             $neuronNetwork = new PerceptronNetwork($networkMap);
-            $learningNetwork = new BackPropogation();
+            $learningNetwork = new BackPropogation(1.2);
             $learningNetwork->setLayers($neuronNetwork->getLayers());
             ?>
-            <h1>Сеть создана </h1></br>
-            <h1>Сеть обучается </h1></br>
+            <h1>Сеть создана </h1>
+            <h1>Сеть обучается </h1>
 
             <h3>Всего вопросов в эпохе: <?= count($learningData) ?></h3>
             <table class="table table-sm table-hover table-striped">
@@ -78,7 +80,6 @@ $testLearningData = [
                 </thead>
                 <tbody>
                     <?php
-                    $maxRepeat = 500;
                     for ($i=0; $i < $maxRepeat; $i++) :
                         $count = count($learningData);
                         $table = <<<TABLEHTML
@@ -94,12 +95,13 @@ $testLearningData = [
                                     <th>Ответ Сети</th>
                                     <th>Правильный ответ</th>
                                 </tr>
-
 TABLEHTML;
                         foreach ($learningData as $key => $data) {
                             $outputVector = $neuronNetwork->handleData($data[0]);
-                            $learningNetwork->study([($data[1] + 1) / 4]);
-                            $index = ceil(($outputVector[0] * 4)) - 1;
+                            $index = array_keys($outputVector, max($outputVector))[0];
+                            $trueOutputVector = [0, 0, 0, 0];
+                            $trueOutputVector[$data[1]] = 1;
+                            $learningNetwork->study($trueOutputVector);
                             if ($index == $data[1])
                                 $count--;
                             $index = $index < 0 ? 0 : $index;
@@ -110,8 +112,6 @@ TABLEHTML;
                                     <td>" . OUTPUTVAL[$data[1]] . "</td>
                                 </tr>
                             ";
-
-
                         }
                         $table .= "</table>";
                         ?>
@@ -138,8 +138,8 @@ TABLEHTML;
                 </tbody>
             </table>
 
-            <h1>Сеть вроде обучилась</h1></br>
-            <h1>Запускаем тест</h1></br>
+            <h1>Сеть вроде обучилась</h1>
+            <h1>Запускаем тест</h1>
 
             <table class="table table-hover table-striped">
                 <thead class="thead-default">
@@ -153,7 +153,7 @@ TABLEHTML;
                     <?php
                     foreach($testLearningData as $key => $input) {
                         $output = $neuronNetwork->handleData($input[0]);
-                        $index = ceil(($output[0] * 4)) - 1;
+                        $index = array_keys($output, max($output))[0];
                         $index = $index < 0 ? 0 : $index;
                         echo '<tr class="' . ($index == $input[1] ? 'table-success' : 'table-danger') . '">';
                         echo '<td>' . ($key+1) . '</td>';
