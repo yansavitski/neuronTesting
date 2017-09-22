@@ -61,7 +61,7 @@ $testLearningData = [
         <div class="container text-center">
             <?php
             $networkMap = [3, 3, 4];
-            $maxRepeat = 700;//800 step=1.2
+            $maxRepeat = 900;//700 step=1.2
             $neuronNetwork = new PerceptronNetwork($networkMap);
             $learningNetwork = new BackPropogation(1.2);
             $learningNetwork->setLayers($neuronNetwork->getLayers());
@@ -82,6 +82,7 @@ $testLearningData = [
                     <?php
                     for ($i=0; $i < $maxRepeat; $i++) :
                         $count = count($learningData);
+                        shuffle($learningData);//должно увеличить шансы что массив будет работать не по заданому алгоритму с числами
                         $table = <<<TABLEHTML
                             <table class="table table-sm table-striped" style="
                                 display: none;
